@@ -26,8 +26,13 @@ def handle_multiwords(check_word, multi_words, dict_service):
     for i, word in enumerate(multi_words):
         print_bold("%d: %s %s" %
                    (i, word.get('expression', ''), word.get('pronounce', '')))
+    number = 0
+    try:
+        number = int(input('Input Number: '))
+    except ValueError:
+        print(colorful.red | "Error input !")
+        handle_multiwords(check_word, multi_words, dict_service)
 
-    number = int(input('Input Number: '))
     if len(multi_words) > number:
         expression = multi_words[number].get('expression', '')
         pronounce = multi_words[number].get('pronounce', '')
@@ -43,18 +48,20 @@ def handle_multiwords(check_word, multi_words, dict_service):
 
 def save(word_dict):
     confirm = input('save to anki[y/N]: ')
-    if confirm == 'y' and anki_canAddNote(word_dict):
-        print(anki_addNote(word_dict))
-        confirm = input('save to file[y/N]: ')
-        if confirm == 'y':
-            # TODO: save
-            file = open(
-                '/home/yydcnjjw/workspace/code/project/'
-                'anki-jp-tools/save_dict', 'a')
-            file.write(json.dumps(word_dict) + "\n")
-            file.close()
-    else:
-        print(colorful.bold & colorful.red | 'can not add note')
+    if confirm == 'y':
+        if anki_canAddNote(word_dict):
+            print(anki_addNote(word_dict))
+            confirm = input('save to file[y/N]: ')
+            if confirm == 'y':
+                # TODO: save
+                file = open(
+                    '/home/yydcnjjw/workspace/code/project/'
+                    'anki-jp-tools/save_dict', 'a')
+                file.write(json.dumps(word_dict) + "\n")
+                file.close()
+        else:
+            print(colorful.bold & colorful.red
+                  | 'Can not add note ! Duplicate !')
 
 
 def main():

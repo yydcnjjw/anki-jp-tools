@@ -41,15 +41,25 @@ class MultiWordsException(Exception):
 
 
 class HJDictService:
+    def __init__(self):
+        self.soup = None
+        self.expression = ''
+
     def get_dict(self, expression, pronounce=None):
-        request = urllib.request.Request(
-            "%s%s" % (api_url, urllib.request.quote(expression)),
-            headers={
-                "User-Agent": useragent,
-                "Cookie": Cookie
-            })
-        result = urllib.request.urlopen(request, timeout=10).read()
-        soup = BeautifulSoup(result, 'html.parser')
+        soup = None
+        if expression != self.expression:
+            self.expression = expression
+            request = urllib.request.Request(
+                "%s%s" % (api_url, urllib.request.quote(expression)),
+                headers={
+                    "User-Agent": useragent,
+                    "Cookie": Cookie
+                })
+            result = urllib.request.urlopen(request, timeout=10).read()
+            soup = BeautifulSoup(result, 'html.parser')
+            self.soup = soup
+        else:
+            soup = self.soup
 
         if self._not_found(soup):
             raise NotfoundException("Not Found word")
@@ -138,8 +148,7 @@ class HJDictService:
         word_descs = []
 
         for word_desc in word_desc_lists:
-            word_type = self._get_format_string(
-                word_desc.find("dt"))
+            word_type = self._get_format_string(word_desc.find("dt"))
             word_means = word_desc.findAll("dd")
             meanings = []
             for mean in word_means:
@@ -151,6 +160,8 @@ class HJDictService:
                     continue
                 jp_mean = self._get_format_string(details[0])
                 cn_mean = self._get_format_string(details[1])
+                if len(jp_mean) == 0 and len(cn_mean) == 0:
+                    continue
                 sentences = []
                 sentences_list = mean.findAll("li")
                 for sentence in sentences_list:
