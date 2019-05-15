@@ -51,17 +51,18 @@ def save(word_dict):
     if confirm == 'y':
         if anki_canAddNote(word_dict):
             print(anki_addNote(word_dict))
-            confirm = input('save to file[y/N]: ')
-            if confirm == 'y':
-                # TODO: save
-                file = open(
-                    '/home/yydcnjjw/workspace/code/project/'
-                    'anki-jp-tools/save_dict', 'a')
-                file.write(json.dumps(word_dict) + "\n")
-                file.close()
+
+            # TODO: save
+            file = open(
+                '/home/yydcnjjw/workspace/code/project/'
+                'anki-jp-tools/save_dict', 'a')
+            file.write(json.dumps(word_dict) + "\n")
+            file.close()
         else:
             print(colorful.bold & colorful.red
                   | 'Can not add note ! Duplicate !')
+    else:
+        print("Disable!")
 
 
 def main():
