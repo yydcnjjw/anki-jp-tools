@@ -8,8 +8,7 @@ import colorful
 
 from anki_api import \
     anki_addNote, \
-    anki_canAddNote, \
-    format_simple
+    anki_canAddNote
 
 from hjdict import \
     HJDictService, \

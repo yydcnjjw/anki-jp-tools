@@ -149,11 +149,10 @@ class HJDictService:
         for word_simples in word_simple_block:
             word_simple_types = word_simples.findAll('h2')
             word_simple_details_list = word_simples.findAll('ul')
-            if len(word_simple_types) != len(word_simple_details_list):
-                continue
 
-            for i in range(len(word_simple_types)):
-                simple_type = self._get_format_string(word_simple_types[i])
+            for i in range(len(word_simple_details_list)):
+                simple_type = self._get_format_string(
+                    word_simple_types[i]) if i < len(word_simple_types) else ''
                 simple_details = []
                 simple_detail_list = word_simple_details_list[i].findAll('li')
                 for detail in simple_detail_list:
@@ -237,14 +236,17 @@ def format_hjdict(word_dict):
                               word_dict.get('word_kata', ''),
                               word_dict.get('word_tone', ''))
 
-    result += 'Simple:\n'
     word_simple = word_dict.get('word_simple', [])
-    for simple in word_simple:
-        simple_type = simple.get('simple_type', '')
-        result += "%s\n" % simple_type
-        word_details = simple.get('simple_details', '')
-        for detail in word_details:
-            result += colorful.red | "  - %s\n" % detail
+    if len(word_simple) == 0:
+        result += "No simple\n"
+    else:
+        result += 'Simple:\n'
+        for simple in word_simple:
+            simple_type = simple.get('simple_type', '')
+            result += "%s\n" % simple_type
+            word_details = simple.get('simple_details', '')
+            for detail in word_details:
+                result += colorful.red | "  - %s\n" % detail
 
     result += '\n'
     result += 'Descs:\n'

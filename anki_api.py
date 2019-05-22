@@ -5,20 +5,38 @@ import json
 import urllib.request
 
 
-def format_simple(simples):
+def format_simple(simples, is_descs=False):
     result = ""
-    result += """<dl>"""
-    for desc in simples:
-        word_type = desc.get('simple_type', '')
-        result += """<dt>%s</dt>""" % word_type
-        result += """<dd>"""
-        result += """<ul>"""
-        word_details = desc.get('simple_details', [])
-        for detail in word_details:
-            result += """<li><span>%s</span></li>""" % detail
-        result += """<ul>"""
-        result += """</dd>"""
-    result += """</dl>"""
+    if is_descs:
+        descs = simples
+        result += """<dl>"""
+        for desc in descs:
+            word_type = desc.get('word_type', '')
+            result += """<dt>%s</dt>""" % word_type
+            result += """<dd>"""
+            result += """<ul>"""
+            word_meanings = desc.get('meanings', [])
+            for mean in word_meanings:
+                cn_mean = mean.get('cn_mean', '')
+                result += "<li>"
+                result += """<span>%s</span>""" % cn_mean
+                result += "</li>"
+            result += """</ul>"""
+            result += """</dd>"""
+        result += """</dl>"""
+    else:
+        result += """<dl>"""
+        for desc in simples:
+            word_type = desc.get('simple_type', '')
+            result += """<dt>%s</dt>""" % word_type
+            result += """<dd>"""
+            result += """<ul>"""
+            word_details = desc.get('simple_details', [])
+            for detail in word_details:
+                result += """<li><span>%s</span></li>""" % detail
+            result += """<ul>"""
+            result += """</dd>"""
+        result += """</dl>"""
     return result
 
 
@@ -77,6 +95,12 @@ def anki_invoke(action, **params):
 
 
 def anki_addNote(word_dict):
+    word_simple = word_dict.get('word_simple', [])
+    word_descs = word_dict.get('word_descs', [])
+    word_simple_null = len(word_simple) == 0
+    if word_simple_null:
+        word_simple = word_descs
+
     return anki_invoke('addNote',
                        note={
                            'deckName': 'Japanese_Wrod',
@@ -93,7 +117,7 @@ def anki_addNote(word_dict):
                                'audio':
                                "[sound:%s]" % word_dict.get('word_audio', ''),
                                'simple':
-                               format_simple(word_dict.get('word_simple', [])),
+                               format_simple(word_simple, word_simple_null),
                                'sentence':
                                format_descs(word_dict.get('word_descs', []))
                            },
