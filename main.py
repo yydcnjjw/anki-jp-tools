@@ -44,6 +44,8 @@ def handle_multiwords(check_word, multi_words, dict_service):
 
         print(colorful.bold | format_hjdict(word_dict))
         save(word_dict)
+    else:
+        print(colorful.red | "Error input!")
 
 
 def save(word_dict):

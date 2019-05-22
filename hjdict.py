@@ -156,7 +156,7 @@ class HJDictService:
                 if details is None:
                     continue
                 details = details.findAll("p")
-                if len(details) != 2:
+                if len(details) < 2:
                     continue
                 jp_mean = self._get_format_string(details[0])
                 cn_mean = self._get_format_string(details[1])
@@ -169,14 +169,11 @@ class HJDictService:
                     if len(sentence_desc) != 2:
                         continue
                     sentence_jp_block = sentence_desc[0]
-                    sentence_jp = sentence_jp_block.stripped_strings
-                    sentence_jp_str = ""
-                    for s in sentence_jp:
-                        sentence_jp_str += s
+                    sentence_jp = self._get_format_string(sentence_jp_block)
                     sentence_audio = sentence_jp_block.span["data-src"]
                     sentence_cn = self._get_format_string(sentence_desc[1])
                     sentences.append({
-                        'sentence_jp': sentence_jp_str,
+                        'sentence_jp': sentence_jp,
                         'sentence_cn': sentence_cn,
                         'sentence_audio': sentence_audio
                     })
@@ -199,7 +196,10 @@ class HJDictService:
 
     def _get_format_string(self, s):
         if s and s.string is None:
-            return ''
+            ret = ""
+            for string in s.stripped_strings:
+                ret += string
+            return ret
         else:
             return s.string.strip()
 
