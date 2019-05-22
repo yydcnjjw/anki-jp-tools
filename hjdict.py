@@ -18,6 +18,8 @@ css_word_pronounces = ('header.word-details-pane-header > '
                        'div.pronounces > '
                        'span')
 
+css_word_simple = ('header.word-details-pane-header > ' 'div.simple')
+
 css_word_details_list = ('div.word-details-item-content > '
                          'section.detail-groups > '
                          'dl')
@@ -137,6 +139,30 @@ class HJDictService:
             else:
                 word_kata = self._get_format_string(word_reading)
 
+        word_simple_block = soup.select(css_word_simple)
+        if word_simple_block is None:
+            raise NotfoundException("Html format error")
+
+        # [{type
+        #   [mean]}]
+        word_simple = []
+        for word_simples in word_simple_block:
+            word_simple_types = word_simples.findAll('h2')
+            word_simple_details_list = word_simples.findAll('ul')
+            if len(word_simple_types) != len(word_simple_details_list):
+                continue
+
+            for i in range(len(word_simple_types)):
+                simple_type = self._get_format_string(word_simple_types[i])
+                simple_details = []
+                simple_detail_list = word_simple_details_list[i].findAll('li')
+                for detail in simple_detail_list:
+                    simple_details.append(self._get_format_string(detail))
+                word_simple.append({
+                    'simple_type': simple_type,
+                    'simple_details': simple_details
+                })
+
         word_desc_lists = soup.select(css_word_details_list)
         if word_desc_lists is None:
             raise NotfoundException("Html format error")
@@ -191,6 +217,7 @@ class HJDictService:
             'word_kata': word_kata,
             'word_tone': word_tone,
             'word_audio': word_audio,
+            'word_simple': word_simple,
             'word_descs': word_descs
         }
 
@@ -210,8 +237,18 @@ def format_hjdict(word_dict):
                               word_dict.get('word_kata', ''),
                               word_dict.get('word_tone', ''))
 
-    word_descs = word_dict.get('word_descs', [])
+    result += 'Simple:\n'
+    word_simple = word_dict.get('word_simple', [])
+    for simple in word_simple:
+        simple_type = simple.get('simple_type', '')
+        result += "%s\n" % simple_type
+        word_details = simple.get('simple_details', '')
+        for detail in word_details:
+            result += colorful.red | "  - %s\n" % detail
 
+    result += '\n'
+    result += 'Descs:\n'
+    word_descs = word_dict.get('word_descs', [])
     for desc in word_descs:
         word_type = desc.get('word_type', '')
         result += "%s\n" % word_type

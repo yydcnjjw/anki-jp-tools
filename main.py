@@ -8,7 +8,8 @@ import colorful
 
 from anki_api import \
     anki_addNote, \
-    anki_canAddNote
+    anki_canAddNote, \
+    format_simple
 
 from hjdict import \
     HJDictService, \
@@ -83,11 +84,11 @@ def main():
         try:
             handle_multiwords(check_word, e.multi_words, dict_service)
         except Exception as e:
-            print(e)
+            raise e
     except NotfoundException as e:
         print(colorful.bold & colorful.red | e)
     except Exception as e:
-        print(e)
+        raise e
 
 
 main()

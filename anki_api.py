@@ -5,18 +5,17 @@ import json
 import urllib.request
 
 
-def format_simple(descs):
+def format_simple(simples):
     result = ""
     result += """<dl>"""
-    for desc in descs:
-        word_type = desc.get('word_type')
+    for desc in simples:
+        word_type = desc.get('simple_type', '')
         result += """<dt>%s</dt>""" % word_type
         result += """<dd>"""
         result += """<ul>"""
-        word_meanings = desc.get('meanings')
-        for mean in word_meanings:
-            cn_mean = mean.get('cn_mean')
-            result += """<li><span>%s</span></li>""" % cn_mean
+        word_details = desc.get('simple_details', [])
+        for detail in word_details:
+            result += """<li><span>%s</span></li>""" % detail
         result += """<ul>"""
         result += """</dd>"""
     result += """</dl>"""
@@ -27,24 +26,24 @@ def format_descs(descs):
     result = ""
     result += """<dl>"""
     for desc in descs:
-        word_type = desc.get('word_type')
+        word_type = desc.get('word_type', '')
         result += """<dt>%s</dt>""" % word_type
         result += """<dd>"""
         result += """<ul>"""
-        word_meanings = desc.get('meanings')
+        word_meanings = desc.get('meanings', [])
         for mean in word_meanings:
-            jp_mean = mean.get('jp_mean')
-            cn_mean = mean.get('cn_mean')
+            jp_mean = mean.get('jp_mean', '')
+            cn_mean = mean.get('cn_mean', '')
             result += "<li>"
             result += """<span>%s</span>/<span>%s</span>""" % (cn_mean,
                                                                jp_mean)
 
             result += """<ul>"""
-            sentences = mean.get('sentences')
+            sentences = mean.get('sentences', [])
             for sentence in sentences:
                 result += """<li>"""
-                sentence_jp = sentence.get('sentence_jp')
-                sentence_cn = sentence.get('sentence_cn')
+                sentence_jp = sentence.get('sentence_jp', '')
+                sentence_cn = sentence.get('sentence_cn', '')
                 sentence_audio = sentence.get('sentence_audio')
                 result += "%s \\ %s [sound:%s]" % (sentence_jp, sentence_cn,
                                                    sentence_audio)
@@ -94,7 +93,7 @@ def anki_addNote(word_dict):
                                'audio':
                                "[sound:%s]" % word_dict.get('word_audio', ''),
                                'simple':
-                               format_simple(word_dict.get('word_descs', [])),
+                               format_simple(word_dict.get('word_simple', [])),
                                'sentence':
                                format_descs(word_dict.get('word_descs', []))
                            },
