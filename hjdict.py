@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import re
+
 import urllib.request
 import colorful
 from bs4 import BeautifulSoup
@@ -156,6 +158,8 @@ class HJDictService:
                 simple_details = []
                 simple_detail_list = word_simple_details_list[i].findAll('li')
                 for detail in simple_detail_list:
+                    if re.match(r'\d+\.', detail.span.string):
+                        detail.span.clear()
                     simple_details.append(self._get_format_string(detail))
                 word_simple.append({
                     'simple_type': simple_type,
