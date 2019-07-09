@@ -50,7 +50,6 @@ class HJDictService:
         self.expression = ''
 
     def get_dict(self, expression, pronounce=None):
-        soup = None
         if expression != self.expression:
             self.expression = expression
             request = urllib.request.Request(
@@ -60,10 +59,9 @@ class HJDictService:
                     "Cookie": Cookie
                 })
             result = urllib.request.urlopen(request, timeout=10).read()
-            soup = BeautifulSoup(result, 'html.parser')
-            self.soup = soup
-        else:
-            soup = self.soup
+            self.soup = BeautifulSoup(result, 'html.parser')
+
+        soup = self.soup
 
         if self._not_found(soup):
             raise NotfoundException("Not Found word")

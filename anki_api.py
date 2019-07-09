@@ -94,50 +94,24 @@ def anki_invoke(action, **params):
     return response['result']
 
 
-def anki_addNote(word_dict):
-    word_simple = word_dict.get('word_simple', [])
-    word_descs = word_dict.get('word_descs', [])
-    word_simple_null = len(word_simple) == 0
-    if word_simple_null:
-        word_simple = word_descs
-
+def anki_addNote(deck, model, field, tags):
     return anki_invoke('addNote',
                        note={
-                           'deckName': 'Japanese_Wrod',
-                           'modelName': 'japanese(dict)',
-                           'fields': {
-                               'expression':
-                               word_dict.get('word_expressions', ''),
-                               'pronounce':
-                               word_dict.get('word_pronounce', ''),
-                               'kata':
-                               word_dict.get('word_kata', ''),
-                               'tone':
-                               word_dict.get('word_tone', ''),
-                               'audio':
-                               "[sound:%s]" % word_dict.get('word_audio', ''),
-                               'simple':
-                               format_simple(word_simple, word_simple_null),
-                               'sentence':
-                               format_descs(word_dict.get('word_descs', []))
-                           },
-                           'tags': ['japanese(dict)'],
+                           'deckName': deck,
+                           'modelName': model,
+                           'fields': field,
+                           'tags': tags,
                            'options': {
                                'allowDuplicate': False
                            }
                        })
 
 
-def anki_canAddNote(word_dict):
+def anki_canAddNote(deck, model, field, tags):
     return anki_invoke('canAddNotes',
                        notes=[{
-                           'deckName': 'Japanese_Wrod',
-                           'modelName': 'japanese(dict)',
-                           'fields': {
-                               'expression':
-                               word_dict.get('word_expressions', ''),
-                               'pronounce':
-                               word_dict.get('word_pronounce', '')
-                           },
-                           'tags': ['japanese(dict)']
+                           'deckName': deck,
+                           'modelName': model,
+                           'fields': field,
+                           'tags': tags
                        }])[0]

@@ -8,7 +8,9 @@ import colorful
 
 from anki_api import \
     anki_addNote, \
-    anki_canAddNote
+    anki_canAddNote, \
+    format_descs, \
+    format_simple
 
 from hjdict import \
     HJDictService, \
@@ -51,8 +53,36 @@ def handle_multiwords(check_word, multi_words, dict_service):
 def save(word_dict):
     confirm = input('save to anki[y/N]: ')
     if confirm == 'y':
-        if anki_canAddNote(word_dict):
-            print(anki_addNote(word_dict))
+        word_simple = word_dict.get('word_simple', [])
+        word_descs = word_dict.get('word_descs', [])
+        word_simple_null = len(word_simple) == 0
+        if word_simple_null:
+            word_simple = word_descs
+
+        field = {
+            'expression':
+            word_dict.get('word_expressions', ''),
+            'pronounce':
+            word_dict.get('word_pronounce', ''),
+            'kata':
+            word_dict.get('word_kata', ''),
+            'tone':
+            word_dict.get('word_tone', ''),
+            'audio':
+            "[sound:%s]" % word_dict.get('word_audio', ''),
+            'simple':
+            format_simple(word_simple, word_simple_null),
+            'sentence':
+            format_descs(word_dict.get('word_descs', []))
+        }
+
+        tags = ['japanese(dict)']
+        model = 'japanese(dict)'
+        deck = 'Japanese_Word'
+
+        if anki_canAddNote(deck, model, field, tags):
+        # try:
+            print(anki_addNote(deck, model, field, tags))
 
             # TODO: save
             file = open(
@@ -60,6 +90,8 @@ def save(word_dict):
                 'anki-jp-tools/save_dict', 'a')
             file.write(json.dumps(word_dict) + "\n")
             file.close()
+        # except Exception as e:
+        #     printException(e)
         else:
             print(colorful.bold & colorful.red
                   | 'Can not add note ! Duplicate !')
@@ -67,6 +99,14 @@ def save(word_dict):
         print("Disable!")
 
 
+DEBUG = True
+        
+def printException(e):
+    if DEBUG:
+        raise e
+    else:
+        print(e)
+        
 def main():
     dict_service = HJDictService()
     check_word = ""
@@ -83,12 +123,11 @@ def main():
         try:
             handle_multiwords(check_word, e.multi_words, dict_service)
         except Exception as e:
-            print(e)
-            # raise e
+            printException(e)
     except NotfoundException as e:
         print(colorful.bold & colorful.red | e)
     except Exception as e:
-        print(e)
+        printException(e)
         # raise e
 
 
