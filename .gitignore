@@ -1,6 +1,9 @@
 .directory
 
-__pycache__/
+/__pycache__/
+/.venv/
+/.vscode/
+
 .dir-locals.el
 .projectile
 save_dict
