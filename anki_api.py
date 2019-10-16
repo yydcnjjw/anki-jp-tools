@@ -63,6 +63,8 @@ def format_descs(descs):
                 sentence_jp = sentence.get('sentence_jp', '')
                 sentence_cn = sentence.get('sentence_cn', '')
                 sentence_audio = sentence.get('sentence_audio')
+                if sentence_audio.startswith('https://'):
+                    sentence_audio = sentence_audio.replace('https://', 'http://', 1)
                 result += "%s \\ %s [sound:%s]" % (sentence_jp, sentence_cn,
                                                    sentence_audio)
                 result += """</li>"""

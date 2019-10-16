@@ -59,6 +59,10 @@ def save(word_dict):
         if word_simple_null:
             word_simple = word_descs
 
+        audio_url = word_dict.get('word_audio', '')
+        if audio_url.startswith('https://'):
+            audio_url = audio_url.replace('https://', 'http://', 1)
+
         field = {
             'expression':
             word_dict.get('word_expressions', ''),
@@ -69,7 +73,7 @@ def save(word_dict):
             'tone':
             word_dict.get('word_tone', ''),
             'audio':
-            "[sound:%s]" % word_dict.get('word_audio', ''),
+            "[sound:%s]" % audio_url,
             'simple':
             format_simple(word_simple, word_simple_null),
             'sentence':
