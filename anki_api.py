@@ -15,25 +15,13 @@ class AnkiApi:
     @staticmethod
     def getApi(type='auto'):
         from anki_connect_api import AnkiConnectApi
-        from anki_web_api import AnkiWebApi        
+        from anki_web_api import AnkiWebApi
         if AnkiApi.__instance is not None:
             return AnkiApi.__instance
         if type == 'auto':
-            if AnkiConnectApi.tryConnect():
-                return AnkiConnectApi()
-            if AnkiWebApi.tryConnect():
-                return AnkiWebApi()
-            raise Exception('anki auto connect failure')
+            return AnkiConnectApi()
         elif type == 'anki_connect':
-            if AnkiConnectApi.tryConnect():
-                return AnkiConnectApi()
-            else:
-                raise Exception('anki connect failure')
-        elif type == 'apki_web':
-            if AnkiWebApi.tryConnect():
-                return AnkiWebApi()
-            else:
-                raise Exception('anki web failure')
+            return AnkiConnectApi()
 
 
 def format_simple(simples, is_descs=False):

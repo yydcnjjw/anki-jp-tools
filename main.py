@@ -82,7 +82,7 @@ def save(word_dict):
         tags = ['japanese(dict)']
         model = 'japanese(dict)'
         deck = 'Japanese_Word'
-        anki_api = AnkiApi.getApi()
+        anki_api = AnkiApi.getApi('anki_connect')
         if anki_api.canAddNote(deck, model, field, tags):
             print(anki_api.addNote(deck, model, field, tags))
             # TODO: save
