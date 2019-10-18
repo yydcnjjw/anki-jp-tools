@@ -69,16 +69,16 @@ class AnkiWebApi(AnkiApi):
         print(fields)
         print(json.dumps([field_data, tags]).encode('utf-8'))
         form_data = {
-            'data': json.dumps([field_data, tags]).encode('utf-8'),
+            'data': json.dumps([field_data, tags]),
             'csrf_token': self.__csrf_token,
             'mid': self.__models[model]['id'],
             'deck': deck
         }
-        data = parse.urlencode(form_data).encode('utf-8')
+        data = parse.urlencode(form_data).replace('+', '%20').encode('utf-8')
         print(data)
-        resp = self.__opener.open(
-            'https://ankiuser.net/edit/save', data=data).read().decode('utf-8')
-        print(resp)
+        # resp = self.__opener.open(
+        #     'https://ankiuser.net/edit/save', data=data).read().decode('utf-8')
+        # print(resp)
         return resp == '1'
 
     def canAddNote(self, deck, model, field, tags):
