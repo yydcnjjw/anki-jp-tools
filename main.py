@@ -7,8 +7,7 @@ import json
 import colorful
 
 from anki_api import \
-    anki_addNote, \
-    anki_canAddNote, \
+    AnkiApi, \
     format_descs, \
     format_simple
 
@@ -83,19 +82,15 @@ def save(word_dict):
         tags = ['japanese(dict)']
         model = 'japanese(dict)'
         deck = 'Japanese_Word'
-
-        if anki_canAddNote(deck, model, field, tags):
-        # try:
-            print(anki_addNote(deck, model, field, tags))
-
+        anki_api = AnkiApi.getApi()
+        if anki_api.canAddNote(deck, model, field, tags):
+            print(anki_api.addNote(deck, model, field, tags))
             # TODO: save
-            file = open(
-                '/home/yydcnjjw/workspace/code/project/'
-                'anki-jp-tools/save_dict', 'a')
-            file.write(json.dumps(word_dict) + "\n")
-            file.close()
-        # except Exception as e:
-        #     printException(e)
+            # file = open(
+            #     '/home/yydcnjjw/workspace/code/project/'
+            #     'anki-jp-tools/save_dict', 'a')
+            # file.write(json.dumps(word_dict) + "\n")
+            # file.close()
         else:
             print(colorful.bold & colorful.red
                   | 'Can not add note ! Duplicate !')
@@ -104,13 +99,15 @@ def save(word_dict):
 
 
 DEBUG = True
-        
+
+
 def printException(e):
     if DEBUG:
         raise e
     else:
         print(e)
-        
+
+
 def main():
     dict_service = HJDictService()
     check_word = ""

@@ -1,8 +1,39 @@
-# -*- coding: utf-8 -*-
+from abc import abstractmethod
 
-import json
 
-import urllib.request
+class AnkiApi:
+    __instance = None
+
+    @abstractmethod
+    def addNote(self, deck, model, field, tags):
+        pass
+
+    @abstractmethod
+    def canAddNote(self, model, field, tags):
+        pass
+
+    @staticmethod
+    def getApi(type='auto'):
+        from anki_connect_api import AnkiConnectApi
+        from anki_web_api import AnkiWebApi        
+        if AnkiApi.__instance is not None:
+            return AnkiApi.__instance
+        if type == 'auto':
+            if AnkiConnectApi.tryConnect():
+                return AnkiConnectApi()
+            if AnkiWebApi.tryConnect():
+                return AnkiWebApi()
+            raise Exception('anki auto connect failure')
+        elif type == 'anki_connect':
+            if AnkiConnectApi.tryConnect():
+                return AnkiConnectApi()
+            else:
+                raise Exception('anki connect failure')
+        elif type == 'apki_web':
+            if AnkiWebApi.tryConnect():
+                return AnkiWebApi()
+            else:
+                raise Exception('anki web failure')
 
 
 def format_simple(simples, is_descs=False):
@@ -64,7 +95,8 @@ def format_descs(descs):
                 sentence_cn = sentence.get('sentence_cn', '')
                 sentence_audio = sentence.get('sentence_audio')
                 if sentence_audio.startswith('https://'):
-                    sentence_audio = sentence_audio.replace('https://', 'http://', 1)
+                    sentence_audio = sentence_audio.replace(
+                        'https://', 'http://', 1)
                 result += "%s \\ %s [sound:%s]" % (sentence_jp, sentence_cn,
                                                    sentence_audio)
                 result += """</li>"""
@@ -74,46 +106,3 @@ def format_descs(descs):
         result += """</dd>"""
     result += """</dl>"""
     return result
-
-
-def anki_request(action, **params):
-    return {'action': action, 'params': params, 'version': 6}
-
-
-def anki_invoke(action, **params):
-    requestJson = json.dumps(anki_request(action, **params)).encode('utf-8')
-    response = json.load(
-        urllib.request.urlopen(
-            urllib.request.Request('http://localhost:8765', data=requestJson)))
-    if len(response) != 2:
-        raise Exception('response has an unexpected number of fields')
-    if 'error' not in response:
-        raise Exception('response is missing required error field')
-    if 'result' not in response:
-        raise Exception('response is missing required result field')
-    if response['error'] is not None:
-        raise Exception(response['error'])
-    return response['result']
-
-
-def anki_addNote(deck, model, field, tags):
-    return anki_invoke('addNote',
-                       note={
-                           'deckName': deck,
-                           'modelName': model,
-                           'fields': field,
-                           'tags': tags,
-                           'options': {
-                               'allowDuplicate': False
-                           }
-                       })
-
-
-def anki_canAddNote(deck, model, field, tags):
-    return anki_invoke('canAddNotes',
-                       notes=[{
-                           'deckName': deck,
-                           'modelName': model,
-                           'fields': field,
-                           'tags': tags
-                       }])[0]
