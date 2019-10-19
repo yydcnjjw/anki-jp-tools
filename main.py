@@ -126,6 +126,7 @@ def main():
         except Exception as e:
             printException(e)
     except NotfoundException as e:
+        # TODO: Not found use api
         print(colorful.bold & colorful.red | e)
     except Exception as e:
         printException(e)

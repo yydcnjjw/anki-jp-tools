@@ -5,19 +5,19 @@ import json
 from urllib import request, parse
 
 baidu_fanyi_api_base_url = 'https://fanyi-api.baidu.com/api/trans/vip/translate'
-baidu_fanyi_appid = '20190427000292168'
-baidu_fanyi_secret_key = 'MqdWiRb_UIZTCPgxqvB7'
+app_key = ''
+secret_key = ''
 
 q = '日本語'
 salt = random.randint(32768, 65536)
-sign = baidu_fanyi_appid + q + str(salt) + baidu_fanyi_secret_key
+sign = app_key + q + str(salt) + secret_key
 sign = hashlib.md5(sign.encode()).hexdigest()
 
 form_data = {
     'q': q,
     'from': 'jp',
     'to': 'zh',
-    'appid': baidu_fanyi_appid,
+    'appid': app_key,
     'salt': salt,
     'sign': sign
 }

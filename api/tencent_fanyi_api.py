@@ -6,9 +6,12 @@ from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.tmt.v20180321 import tmt_client, models
 
+app_key = ''
+app_secret = ''
+
 try:
     cred = credential.Credential(
-        "AKIDoSzQmwKffgroLdn1pOlnFsRtiGYUuale", "kS142weSsLaUMsUX2f2MARB3d2goZlwZ")
+        app_key, app_secret)
     httpProfile = HttpProfile()
     httpProfile.endpoint = "tmt.tencentcloudapi.com"
 

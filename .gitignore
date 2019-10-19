@@ -7,3 +7,4 @@ __pycache__/
 .dir-locals.el
 .projectile
 save_dict
+secret.json
