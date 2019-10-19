@@ -14,14 +14,17 @@ class AnkiApi:
 
     @staticmethod
     def getApi(type='auto'):
-        from anki_connect_api import AnkiConnectApi
-        from anki_web_api import AnkiWebApi
+        from api.anki_connect_api import AnkiConnectApi
+        from api.anki_web_api import AnkiWebApi
         if AnkiApi.__instance is not None:
             return AnkiApi.__instance
-        if type == 'auto':
-            return AnkiConnectApi()
-        elif type == 'anki_connect':
-            return AnkiConnectApi()
+        try:
+            if type == 'auto':
+                return AnkiConnectApi()
+            elif type == 'anki_connect':
+                return AnkiConnectApi()
+        except Exception:
+            raise Exception("anki api is not available")
 
 
 def format_simple(simples, is_descs=False):

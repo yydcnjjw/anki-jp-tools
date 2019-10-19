@@ -6,7 +6,7 @@ import json
 
 import colorful
 
-from anki_api import \
+from api.anki_api import \
     AnkiApi, \
     format_descs, \
     format_simple
@@ -98,14 +98,14 @@ def save(word_dict):
         print("Disable!")
 
 
-DEBUG = True
+DEBUG = False
 
 
 def printException(e):
     if DEBUG:
         raise e
     else:
-        print(e)
+        print(colorful.red | e)
 
 
 def main():

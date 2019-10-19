@@ -4,7 +4,7 @@ import json
 
 import urllib.request
 
-from anki_api import AnkiApi
+from .anki_api import AnkiApi
 
 base_1_url = "http://localhost:8765"
 base_2_url = "http://47.101.146.156:8765"

@@ -8,7 +8,7 @@ from urllib import request
 from urllib import parse
 from bs4 import BeautifulSoup
 
-from anki_api import AnkiApi
+from .anki_api import AnkiApi
 
 
 class AnkiWebApi(AnkiApi):
