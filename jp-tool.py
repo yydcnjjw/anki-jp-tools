@@ -36,7 +36,7 @@ def handle_multiwords(check_word, multi_words, dict_service):
         if check_word == expression:
             word_dict['word_expressions'] = expression + pronounce
 
-        print(colorful.bold | format_hjdict(word_dict))
+        print(colorful.bold | Dict.format_hjdict(word_dict))
         save(word_dict)
     else:
         print(colorful.red | "Error input!")
@@ -67,15 +67,15 @@ def save(word_dict):
             'audio':
             "[sound:%s]" % audio_url,
             'simple':
-            format_simple(word_simple, word_simple_null),
+            anki.format_simple(word_simple, word_simple_null),
             'sentence':
-            format_descs(word_dict.get('word_descs', []))
+            anki.format_descs(word_dict.get('word_descs', []))
         }
 
         tags = ['japanese(dict)']
         model = 'japanese(dict)'
         deck = 'Japanese_Word'
-        anki_api = AnkiApi.getApi('anki_connect')
+        anki_api = anki.AnkiConnectApi()
         if anki_api.canAddNote(deck, model, field, tags):
             print(anki_api.addNote(deck, model, field, tags))
             # TODO: save
@@ -124,9 +124,10 @@ def main():
         if len(sys.argv) == 2:
             check_word = sys.argv[1]
             word_dict = dict_service.get_dict(check_word)
-
-        print(colorful.bold | Dict.format_hjdict(word_dict))
-        save(word_dict)
+            print(colorful.bold | Dict.format_hjdict(word_dict))
+            save(word_dict)
+        else:
+            print(colorful.bold & colorful.red | 'param: translate text')
 
     except Dict.MultiWordsException as e:
         try:
