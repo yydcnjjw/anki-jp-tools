@@ -40,4 +40,4 @@ def tencent_fanyi_query(q, f, t):
         return [resp.TargetText]
 
     except TencentCloudSDKException as err:
-        print(err)
+        raise err

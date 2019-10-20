@@ -32,5 +32,6 @@ def baidu_fanyi_query(q, f, t):
     data = parse.urlencode(form_data).encode('utf-8')
     resp = json.loads(request.urlopen(
         __baidu_fanyi_api_base_url, data=data).read().decode('utf-8'))
-
+    if resp['error_code'] != '52000':
+        raise resp['error_code']
     return list(map(lambda r: r['dst'], resp['trans_result']))

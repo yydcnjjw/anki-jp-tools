@@ -103,17 +103,19 @@ def printException(e):
 
 def fanyiApi(text):
     for vender in ['google', 'tencent', 'youdao', 'baidu']:
-        print(colorful.bold | '{}:'.format(vender))
-        result = api_call('fanyi', {
-            'vender': vender,
-            'q': text,
-            'from': 'ja',
-            'to': 'zh'
-        })
-        for s in result:
-            print('    ' + s)
-        print()
-    pass
+        try:
+            print(colorful.bold | '{}:'.format(vender))
+            result = api_call('fanyi', {
+                'vender': vender,
+                'q': text,
+                'from': 'ja',
+                'to': 'zh'
+            })
+            for s in result:
+                print('    ' + s)
+            print()
+        except Exception as e:
+            printException(e)
 
 
 def main():

@@ -38,4 +38,7 @@ def youdao_fanyi_query(q, f, t):
     data = parse.urlencode(form_data).encode('utf-8')
     resp = json.loads(request.urlopen(
         __youdao_fanyi_api_base_url, data=data).read().decode('utf-8'))
+
+    if resp['errorCode'] != '0':
+        raise Exception(resp['errorCode'])
     return resp['translation']
