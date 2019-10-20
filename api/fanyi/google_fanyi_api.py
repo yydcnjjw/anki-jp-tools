@@ -4,16 +4,20 @@ import math
 
 from urllib import request, parse
 
-google_fanyi_api_base_url = 'https://translate.google.cn/translate_a/single'
-google_fanyi_home_page_url = 'https://translate.google.cn'
+from conf import get_conf, put_conf
+__google_conf = get_conf('google')
 
-google_access_header = {
+__google_fanyi_api_base_url = 'https://translate.google.cn/translate_a/single'
+__google_fanyi_home_page_url = 'https://translate.google.cn'
+
+__google_access_header = {
     'user-agent': 'user-agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 }
 
+
 def get_tkk():
-    req = request.Request(google_fanyi_home_page_url,
-                          headers=google_access_header)
+    req = request.Request(__google_fanyi_home_page_url,
+                          headers=__google_access_header)
     resp = request.urlopen(req).read().decode('utf-8')
     tkk_match = re.search(r'tkk:\'(\d*).(\d*)\'', resp)
     tkk_pair = (tkk_match.group(1), tkk_match.group(2))
@@ -96,27 +100,37 @@ def get_tk(text, tkk):
 
     return '{}.{}'.format(a, a ^ b)
 
-text = '私は中国人'
-tkk = get_tkk()
-tk = get_tk(text, tkk)
-form_data = [
-    ('client', 'webapp'),
-    ('sl', 'ja'),
-    ('tl', 'zh-CN'),
-    ('hl', 'zh-CN'),
-    ('dt', 'at'),
-    ('dt', 'bd'),
-    ('dt', 'ex'),
-    ('dt', 'ld'),
-    ('dt', 'md'),
-    ('dt', 'qca'),
-    ('dt', 'rw'),
-    ('dt', 'rm'),
-    ('dt', 'ss'),
-    ('dt', 't'),
-    ('tk', tk),
-    ('q', text)
-]
-data = parse.urlencode(form_data).encode('utf-8')
-resp = request.urlopen(google_fanyi_api_base_url, data=data).read().decode('utf-8')
-print(json.loads(resp)[0][0][0])
+
+def google_fanyi_query(q, f, t):
+    global __google_conf
+    if __google_conf is None:
+        __google_conf = {
+            'ttk': get_tkk()
+        }
+        put_conf('google', __google_conf)
+
+    tkk = __google_conf['ttk']
+    tk = get_tk(q, tkk)
+    form_data = [
+        ('client', 'webapp'),
+        ('sl', f),
+        ('tl', t),
+        ('hl', 'zh-CN'),
+        ('dt', 'at'),
+        ('dt', 'bd'),
+        ('dt', 'ex'),
+        ('dt', 'ld'),
+        ('dt', 'md'),
+        ('dt', 'qca'),
+        ('dt', 'rw'),
+        ('dt', 'rm'),
+        ('dt', 'ss'),
+        ('dt', 't'),
+        ('tk', tk),
+        ('q', q)
+    ]
+    data = parse.urlencode(form_data).encode('utf-8')
+    resp = request.urlopen(__google_fanyi_api_base_url,
+                           data=data).read().decode('utf-8')
+
+    return list(filter(lambda x: x is not None, map(lambda x: x[0], json.loads(resp)[0])))

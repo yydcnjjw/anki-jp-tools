@@ -6,16 +6,9 @@ import json
 
 import colorful
 
-from api.anki_api import \
-    AnkiApi, \
-    format_descs, \
-    format_simple
-
-from hjdict import \
-    HJDictService, \
-    format_hjdict, \
-    MultiWordsException,\
-    NotfoundException
+import api.anki as anki
+import api.dict as Dict
+from api import api_call
 
 
 def print_bold(s):
@@ -108,29 +101,43 @@ def printException(e):
         print(colorful.red | e)
 
 
+def fanyiApi(text):
+    for vender in ['google', 'tencent', 'youdao', 'baidu']:
+        print(colorful.bold | '{}:'.format(vender))
+        result = api_call('fanyi', {
+            'vender': vender,
+            'q': text,
+            'from': 'ja',
+            'to': 'zh'
+        })
+        for s in result:
+            print('    ' + s)
+        print()
+    pass
+
+
 def main():
-    dict_service = HJDictService()
+    dict_service = Dict.HJDictApi()
     check_word = ""
     try:
         word_dict = ""
         if len(sys.argv) == 2:
             check_word = sys.argv[1]
-            word_dict = dict_service.get_dict(sys.argv[1])
+            word_dict = dict_service.get_dict(check_word)
 
-        print(colorful.bold | format_hjdict(word_dict))
+        print(colorful.bold | Dict.format_hjdict(word_dict))
         save(word_dict)
 
-    except MultiWordsException as e:
+    except Dict.MultiWordsException as e:
         try:
             handle_multiwords(check_word, e.multi_words, dict_service)
         except Exception as e:
             printException(e)
-    except NotfoundException as e:
+    except Dict.NotfoundException as e:
         # TODO: Not found use api
-        print(colorful.bold & colorful.red | e)
+        fanyiApi(check_word)
     except Exception as e:
         printException(e)
-        # raise e
 
 
 main()

@@ -4,12 +4,12 @@ import json
 
 import urllib.request
 
-from .anki_api import AnkiApi
 
 base_1_url = "http://localhost:8765"
 base_2_url = "http://47.101.146.156:8765"
 
-class AnkiConnectApi(AnkiApi):
+
+class AnkiConnectApi:
     __base_url = base_1_url
 
     def __init__(self, *args, **kwargs):

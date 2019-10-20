@@ -1,32 +1,3 @@
-from abc import abstractmethod
-
-
-class AnkiApi:
-    __instance = None
-
-    @abstractmethod
-    def addNote(self, deck, model, field, tags):
-        pass
-
-    @abstractmethod
-    def canAddNote(self, model, field, tags):
-        pass
-
-    @staticmethod
-    def getApi(type='auto'):
-        from api.anki_connect_api import AnkiConnectApi
-        from api.anki_web_api import AnkiWebApi
-        if AnkiApi.__instance is not None:
-            return AnkiApi.__instance
-        try:
-            if type == 'auto':
-                return AnkiConnectApi()
-            elif type == 'anki_connect':
-                return AnkiConnectApi()
-        except Exception:
-            raise Exception("anki api is not available")
-
-
 def format_simple(simples, is_descs=False):
     result = ""
     if is_descs:

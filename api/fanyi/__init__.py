@@ -1,0 +1,4 @@
+from .baidu_fanyi_api import baidu_fanyi_query
+from .tencent_fanyi_api import tencent_fanyi_query
+from .google_fanyi_api import google_fanyi_query
+from .youdao_fanyi_api import youdao_fanyi_query
