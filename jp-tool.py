@@ -112,7 +112,8 @@ def fanyiApi(text):
                 'to': 'zh'
             })
             for s in result:
-                print('    ' + s)
+                for s in filter(lambda x: x != '', s.split('。')):
+                    print('    ' + s + '。')
             print()
         except Exception as e:
             printException(e)

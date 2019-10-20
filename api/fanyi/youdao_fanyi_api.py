@@ -12,6 +12,13 @@ __youdao_fanyi_api_base_url = 'https://openapi.youdao.com/api'
 __youdao_conf = get_conf('youdao')
 
 
+def truncate(q):
+    if q is None:
+        return None
+    size = len(q)
+    return q if size <= 20 else q[0:10] + str(size) + q[size - 10:size]
+
+
 def youdao_fanyi_query(q, f, t):
     if __youdao_conf is None:
         return
@@ -21,8 +28,8 @@ def youdao_fanyi_query(q, f, t):
 
     salt = str(uuid.uuid1())
     curtime = str(int(time.time()))
-    sign = app_key + q + salt + curtime + secret_key
-    sign = hashlib.sha256(sign.encode()).hexdigest()
+    sign = app_key + truncate(q) + salt + curtime + secret_key
+    sign = hashlib.sha256(sign.encode('utf-8')).hexdigest()
 
     form_data = {
         'q': q,
