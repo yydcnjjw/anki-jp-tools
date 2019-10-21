@@ -78,12 +78,6 @@ def save(word_dict):
         anki_api = anki.AnkiConnectApi()
         if anki_api.canAddNote(deck, model, field, tags):
             print(anki_api.addNote(deck, model, field, tags))
-            # TODO: save
-            # file = open(
-            #     '/home/yydcnjjw/workspace/code/project/'
-            #     'anki-jp-tools/save_dict', 'a')
-            # file.write(json.dumps(word_dict) + "\n")
-            # file.close()
         else:
             print(colorful.bold & colorful.red
                   | 'Can not add note ! Duplicate !')
@@ -138,7 +132,6 @@ def main():
         except Exception as e:
             printException(e)
     except Dict.NotfoundException as e:
-        # TODO: Not found use api
         fanyiApi(check_word)
     except Exception as e:
         printException(e)
