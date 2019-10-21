@@ -44,6 +44,9 @@ class AnkiConnectApi:
     def __getVersion(self):
         return self.__anki_invoke('version')
 
+    def sync(self):
+        return self.__anki_invoke('sync')
+
     def __anki_request(self, action, **params):
         return {'action': action, 'params': params, 'version': 6}
 
